@@ -1,0 +1,278 @@
+/* ===== Reset básico e tipografia ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  min-height: 100vh;
+  color: #222;
+}
+
+.hidden { display: none !important; }
+
+/* ===== Ecrãs ===== */
+.screen { min-height: 100vh; }
+
+#login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ===== Cartões ===== */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-card h1 { margin-bottom: 8px; color: #1e3c72; }
+.subtitle { color: #666; margin-bottom: 20px; }
+.hint { margin-top: 16px; font-size: 0.85rem; color: #888; }
+
+/* ===== Formulários ===== */
+label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: #333;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #2a5298;
+  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.15);
+}
+
+/* Botões */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+.btn:hover { opacity: 0.9; }
+.btn:active { transform: scale(0.98); }
+
+.btn-primary { background: #2a5298; color: #fff; margin-top: 18px; width: 100% }
+.btn-secondary { background: #6c757d; color: #fff; white-space: nowrap; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-small { padding: 4px 10px; font-size: 0.85rem; }
+
+/* Mensagens */
+.error { color: #dc3545; margin-top: 12px; }
+.success { color: #1b7e4a; margin-top: 14px; font-weight: 600; }
+
+/* ===== Barra superior ===== */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 14px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand { font-size: 1.25rem; font-weight: 700; color: #1e3c72; }
+.user-tag {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  background: #2a5298;
+  border-radius: 999px;
+  padding: 3px 12px;
+  margin-left: 10px;
+}
+
+/* ===== Conteúdo ===== */
+.content {
+  max-width: 1000px;
+  margin: 28px auto;
+  padding: 0 16px;
+}
+
+.content h2 { color: #1e3c72; margin-bottom: 12px; }
+
+.grid-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.grid-form .full-row { grid-column: 1 / -1; }
+
+.inline-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* ===== Tabela ===== */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.list-header input[type="search"] { max-width: 260px; }
+
+.table-wrapper { overflow-x: auto; margin-top: 10px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e2e2;
+  text-align: left;
+}
+th { background: #f2f5fa; color: #1e3c72; }
+tbody tr:hover { background: #f7f9fc; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge-pendente { background: #fff3cd; color: #856404; }
+.badge-aprovado { background: #d1e7dd; color: #0f5132; }
+.badge-recusado { background: #f8d7da; color: #842029; }
+
+.empty { color: #888; font-style: italic; padding: 14px 0; }
+
+/* ===== Lista de funcionários ===== */
+.employee-list { list-style: none; }
+.employee-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ===== Botões extra ===== */
+.btn-success { background: #1b7e4a; color: #fff; }
+
+a { color: #2a5298; }
+
+.muted { color: #888; font-weight: 400; font-size: 0.85rem; }
+
+/* ===== Pré-visualização do limite no formulário ===== */
+.previsao {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.previsao-ok   { background: #d1e7dd; color: #0f5132; }
+.previsao-cheio{ background: #f8d7da; color: #842029; }
+
+/* ===== Calendário ===== */
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.cal-nav { display: flex; gap: 6px; }
+.cal-title { text-align: center; color: #2a5298; margin: 10px 0; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.cal-cell {
+  min-height: 78px;
+  border: 1px solid #e2e6ee;
+  border-radius: 8px;
+  padding: 4px 6px;
+  background: #fafbfd;
+  font-size: 0.75rem;
+  overflow: hidden;
+}
+.cal-weekday {
+  min-height: 0;
+  text-align: center;
+  font-weight: 700;
+  background: #f2f5fa;
+  color: #1e3c72;
+  border: none;
+  padding: 6px;
+}
+.cal-empty { background: transparent; border: none; min-height: 78px; }
+.cal-fimde-semana { background: #eef1f6; }
+.cal-hoje { outline: 2px solid #2a5298; }
+
+.cal-num { font-weight: 700; color: #333; margin-bottom: 2px; }
+
+.cal-com-ferias { background: #e8f6ee; border-color: #b7e0c5; }
+.cal-cheio      { background: #fdecec; border-color: #f3bcbc; }
+
+.cal-count { font-weight: 700; margin-bottom: 3px; }
+
+.cal-names { display: flex; flex-direction: column; gap: 2px; }
+.cal-chip {
+  background: #ffffff;
+  border: 1px solid #d5dbe6;
+  border-radius: 999px;
+  padding: 1px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 0.85rem; color: #555; }
+.leg-item { display: inline-flex; align-items: center; gap: 4px; }
+.leg-today { font-weight: 700; color: #2a5298; }
+
+/* ===== Administração ===== */
+.admin-settings { margin-bottom: 18px; }
+.card h3 { color: #1e3c72; margin: 18px 0 8px; }
+
+/* ===== Rodapé ===== */
+.footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  padding: 18px;
+}
+.footer code { background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; }
+
+/* ===== Responsivo ===== */
+@media (max-width: 600px) {
+  .topbar { flex-direction: column; gap: 10px; }
+  .list-header { flex-direction: column; align-items: stretch; }
+  .list-header input[type="search"] { max-width: 100%; }
+}

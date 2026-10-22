@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Férias dos Funcionários</title>
+  <meta name="description" content="Aplicação para organizar as férias dos funcionários com calendário e controlo de limite máximo." />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== ECRÃ DE LOGIN / REGISTO ===================== -->
+  <div id="login-screen" class="screen">
+    <div class="card login-card">
+      <h1>🗓️ Gestão de Férias</h1>
+      <p class="subtitle">Inicie sessão para organizar as férias</p>
+
+      <!-- Formulário de entrada -->
+      <form id="login-form" autocomplete="off">
+        <label for="username">Utilizador</label>
+        <input type="text" id="username" placeholder="admin" required />
+
+        <label for="password">Palavra-passe</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+
+        <button type="submit" class="btn btn-primary">Entrar</button>
+        <p id="login-error" class="error hidden"></p>
+        <p class="hint" id="login-hint">Admin inicial: <strong>admin</strong> / <strong>admin123</strong></p>
+        <p class="hint">
+          Não tem conta? <a href="#" id="show-register">Registar-se</a>
+        </p>
+      </form>
+
+      <!-- Formulário de registo (escondido por omissão) -->
+      <form id="register-form" class="hidden" autocomplete="off">
+        <label for="reg-username">Novo utilizador</label>
+        <input type="text" id="reg-username" placeholder="ex.: joao.silva" required />
+
+        <label for="reg-password">Palavra-passe</label>
+        <input type="password" id="reg-password" required />
+
+        <label for="reg-password2">Confirmar palavra-passe</label>
+        <input type="password" id="reg-password2" required />
+
+        <button type="submit" class="btn btn-primary">Criar conta</button>
+        <p id="register-error" class="error hidden"></p>
+        <p id="register-ok" class="success hidden"></p>
+        <p class="hint">Já tem conta? <a href="#" id="show-login">Iniciar sessão</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== APLICAÇÃO (APÓS LOGIN) ===================== -->
+  <div id="app-screen" class="screen hidden">
+
+    <header class="topbar">
+      <div class="brand">🗓️ Gestão de Férias <span class="user-tag" id="welcome-user"></span></div>
+      <button id="logout-btn" class="btn btn-danger">Terminar sessão</button>
+    </header>
+
+    <main class="content">
+
+      <!-- Secção: Calendário -->
+      <section class="card">
+        <div class="cal-header">
+          <h2>Calendário de férias</h2>
+          <div class="cal-nav">
+            <button id="cal-prev" class="btn btn-secondary btn-small">◀</button>
+            <button id="cal-today" class="btn btn-secondary btn-small">Hoje</button>
+            <button id="cal-next" class="btn btn-secondary btn-small">▶</button>
+          </div>
+        </div>
+        <h3 id="cal-title" class="cal-title"></h3>
+        <div id="cal-grid" class="cal-grid"></div>
+        <div id="cal-legend" class="cal-legend"></div>
+      </section>
+
+      <!-- Secção: Novo pedido de férias -->
+      <section class="card">
+        <h2>Novo pedido de férias</h2>
+        <form id="vacation-form" class="grid-form" autocomplete="off">
+          <div>
+            <label for="emp-name">Funcionário</label>
+            <select id="emp-name" required></select>
+          </div>
+          <div>
+            <label for="start-date">Data de início</label>
+            <input type="date" id="start-date" required />
+          </div>
+          <div>
+            <label for="end-date">Data de fim</label>
+            <input type="date" id="end-date" required />
+          </div>
+          <div class="full-row">
+            <label for="notes">Observações (opcional)</label>
+            <input type="text" id="notes" placeholder="Ex.: férias de verão" />
+          </div>
+          <div class="full-row">
+            <p id="previsao-limite" class="previsao hidden"></p>
+          </div>
+          <div class="full-row">
+            <button type="submit" class="btn btn-primary">Enviar pedido</button>
+          </div>
+        </form>
+        <p id="form-message" class="success hidden"></p>
+        <p id="form-error" class="error hidden"></p>
+      </section>
+
+      <!-- Secção: Lista de pedidos -->
+      <section class="card">
+        <h2>Pedidos de férias</h2>
+        <div class="table-wrapper">
+          <table id="vacation-table">
+            <thead>
+              <tr>
+                <th>Funcionário</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Dias úteis</th>
+                <th>Estado</th>
+                <th>Observações</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="vacation-tbody"></tbody>
+          </table>
+          <p id="empty-msg" class="empty">Ainda não existem pedidos de férias.</p>
+        </div>
+      </section>
+
+      <!-- Secção: Administração (apenas visível para admin) -->
+      <section class="card admin-only hidden">
+        <h2>⚙️ Administração</h2>
+
+        <div class="admin-settings">
+          <label for="limite-max">Limite máximo de funcionários em férias por dia
+            <span id="limite-label" class="muted"></span></label>
+          <input type="number" id="limite-max" min="1" max="50" style="max-width:120px" />
+        </div>
+
+        <h3>Criar utilizador (já aprovado)</h3>
+        <form id="admin-create-user-form" class="inline-form" autocomplete="off">
+          <input type="text" id="new-username" placeholder="Utilizador" required />
+          <input type="password" id="new-password" placeholder="Palavra-passe" required />
+          <select id="new-role" style="max-width:180px">
+            <option value="funcionario">Funcionário</option>
+            <option value="admin">Administrador</option>
+          </select>
+          <button type="submit" class="btn btn-secondary">Criar</button>
+        </form>
+
+        <h3>Utilizadores registados</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Utilizador</th>
+                <th>Papel</th>
+                <th>Estado</th>
+                <th>Atalhos</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="user-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      Dados guardados no navegador (localStorage) &middot; Para dados partilhados entre vários PCs é necessário uma base de dados (ex.: Supabase)
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
