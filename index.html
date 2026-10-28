@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestão de Férias dos Funcionários</title>
-  <meta name="description" content="Aplicação para organizar as férias dos funcionários com calendário e controlo de limite máximo." />
+  <title>Gestão de Férias — Departamentos</title>
+  <meta name="description" content="Organização de férias por departamentos: admin/RH, chefes de departamento e funcionários, com calendário e controlo de limites." />
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
 
@@ -28,7 +28,7 @@
 
         <button type="submit" class="btn btn-primary">Entrar</button>
         <p id="login-error" class="error hidden"></p>
-        <p class="hint" id="login-hint">Admin inicial: <strong>admin</strong> / <strong>admin123</strong></p>
+        <p class="hint" id="login-hint">Admin inicial (RH): <strong>admin</strong> / <strong>admin123</strong></p>
         <p class="hint">
           Não tem conta? <a href="#" id="show-register">Registar-se</a>
         </p>
@@ -39,6 +39,9 @@
         <label for="reg-username">Novo utilizador</label>
         <input type="text" id="reg-username" placeholder="ex.: joao.silva" required />
 
+        <label for="reg-nome">Nome completo</label>
+        <input type="text" id="reg-nome" placeholder="Ex.: João Silva" />
+
         <label for="reg-password">Palavra-passe</label>
         <input type="password" id="reg-password" required />
 
@@ -48,6 +51,7 @@
         <button type="submit" class="btn btn-primary">Criar conta</button>
         <p id="register-error" class="error hidden"></p>
         <p id="register-ok" class="success hidden"></p>
+        <p class="hint">A conta fica pendente: o administrador (RH) coloca-a num departamento e aprova.</p>
         <p class="hint">Já tem conta? <a href="#" id="show-login">Iniciar sessão</a></p>
       </form>
     </div>
@@ -63,11 +67,15 @@
 
     <main class="content">
 
-      <!-- Secção: Calendário -->
+      <!-- Info da quota do utilizador -->
+      <section class="card quota-card" id="quota-info"></section>
+
+      <!-- Secção: Calendário (por departamento) -->
       <section class="card">
         <div class="cal-header">
           <h2>Calendário de férias</h2>
           <div class="cal-nav">
+            <select id="cal-dept" class="gestor-only hidden" title="Ver outro departamento"></select>
             <button id="cal-prev" class="btn btn-secondary btn-small">◀</button>
             <button id="cal-today" class="btn btn-secondary btn-small">Hoje</button>
             <button id="cal-next" class="btn btn-secondary btn-small">▶</button>
@@ -76,16 +84,13 @@
         <h3 id="cal-title" class="cal-title"></h3>
         <div id="cal-grid" class="cal-grid"></div>
         <div id="cal-legend" class="cal-legend"></div>
+        <p class="muted">Funcionários e chefes vêem apenas o calendário do seu departamento; o RH pode alternar entre departamentos.</p>
       </section>
 
       <!-- Secção: Novo pedido de férias -->
       <section class="card">
         <h2>Novo pedido de férias</h2>
         <form id="vacation-form" class="grid-form" autocomplete="off">
-          <div>
-            <label for="emp-name">Funcionário</label>
-            <select id="emp-name" required></select>
-          </div>
           <div>
             <label for="start-date">Data de início</label>
             <input type="date" id="start-date" required />
@@ -107,11 +112,15 @@
         </form>
         <p id="form-message" class="success hidden"></p>
         <p id="form-error" class="error hidden"></p>
+        <p class="muted">O pedido vai para o chefe do seu departamento. O administrador (RH) pode sempre aprovar/recusar por cima — a decisão dele é final e aparece como marca "RH aprovou/recusou".</p>
       </section>
 
       <!-- Secção: Lista de pedidos -->
       <section class="card">
-        <h2>Pedidos de férias</h2>
+        <div class="cal-header">
+          <h2>Pedidos de férias</h2>
+          <select id="req-filter" class="hidden"></select>
+        </div>
         <div class="table-wrapper">
           <table id="vacation-table">
             <thead>
@@ -131,36 +140,80 @@
         </div>
       </section>
 
-      <!-- Secção: Administração (apenas visível para admin) -->
+      <!-- Secção: Solicitações de aumento de quota (chefe -> RH) -->
+      <section class="card chefe-only hidden" id="solicitar-wrap">
+        <h2>📈 Pedidos de aumento de dias de férias</h2>
+        <p class="muted">O chefe de departamento solicita ao administrador (RH) mais dias para um funcionário. A aprovação é sempre feita pelo RH.</p>
+        <form id="sol-form" class="inline-form" autocomplete="off">
+          <select id="sol-user" required></select>
+          <select id="sol-mes" required></select>
+          <input type="number" id="sol-dias" min="1" max="30" value="1" style="max-width:90px" required />
+          <input type="text" id="sol-motivo" placeholder="Motivo (opcional)" />
+          <button type="submit" class="btn btn-primary">Solicitar ao RH</button>
+        </form>
+        <p id="sol-ok" class="success hidden"></p>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Funcionário</th><th>Mês</th><th>Dias a acrescentar</th><th>Motivo</th><th>Solicitado por</th><th>Estado</th><th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="sol-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Secção: Administração (apenas admin/RH) -->
       <section class="card admin-only hidden">
-        <h2>⚙️ Administração</h2>
+        <h2>⚙️ Administração (RH)</h2>
 
         <div class="admin-settings">
-          <label for="limite-max">Limite máximo de funcionários em férias por dia
-            <span id="limite-label" class="muted"></span></label>
+          <label for="limite-max">Limite máximo global de funcionários em férias no mesmo dia</label>
           <input type="number" id="limite-max" min="1" max="50" style="max-width:120px" />
+        </div>
+
+        <h3>Departamentos</h3>
+        <form id="dept-form" class="inline-form" autocomplete="off">
+          <input type="text" id="dept-nome" placeholder="Nome do departamento (ex.: Vendas)" required />
+          <button type="submit" class="btn btn-secondary">Criar departamento</button>
+        </form>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Departamento</th><th>Chefe de departamento</th><th>Pedidos pendentes</th><th>Calendário</th><th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="dept-tbody"></tbody>
+          </table>
         </div>
 
         <h3>Criar utilizador (já aprovado)</h3>
         <form id="admin-create-user-form" class="inline-form" autocomplete="off">
           <input type="text" id="new-username" placeholder="Utilizador" required />
+          <input type="text" id="new-nome" placeholder="Nome completo" />
           <input type="password" id="new-password" placeholder="Palavra-passe" required />
-          <select id="new-role" style="max-width:180px">
+          <select id="new-role" style="max-width:190px">
             <option value="funcionario">Funcionário</option>
-            <option value="admin">Administrador</option>
+            <option value="chefe">Chefe de departamento</option>
+            <option value="rh">Papel RH (acesso global)</option>
           </select>
+          <select id="new-dept" style="max-width:190px"></select>
+          <input type="number" id="new-quota" min="0" max="60" value="22" style="max-width:110px" title="Quota anual de dias úteis" />
           <button type="submit" class="btn btn-secondary">Criar</button>
         </form>
 
-        <h3>Utilizadores registados</h3>
+        <h3>Utilizadores</h3>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
                 <th>Utilizador</th>
                 <th>Papel</th>
+                <th>Departamento</th>
+                <th>Quota (dias)</th>
                 <th>Estado</th>
-                <th>Atalhos</th>
                 <th>Ações</th>
               </tr>
             </thead>

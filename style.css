@@ -276,3 +276,30 @@ a { color: #2a5298; }
   .list-header { flex-direction: column; align-items: stretch; }
   .list-header input[type="search"] { max-width: 100%; }
 }
+
+/* ===== Quota do utilizador ===== */
+.quota-card {
+  background: linear-gradient(135deg, #eef4ff, #f8fbff);
+  border-left: 6px solid #1e3c72;
+  font-size: 0.98rem;
+}
+.quota-card.hidden { display: none; }
+
+/* ===== Marca d'água das decisões RH ===== */
+.marca-agua {
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transform: rotate(-2deg);
+  display: inline-block;
+  border: 2px dashed currentColor;
+  opacity: 0.9;
+}
+.marca-rh-aprovado { color: #1b7a3d; background: rgba(27,122,61,.08); }
+.marca-rh-recusado { color: #b02a2a; background: rgba(176,42,42,.08); }
+
+/* Selector de departamento no calendário */
+#cal-dept { max-width: 220px; }
